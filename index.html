@@ -12,7 +12,6 @@
             --deep-blue: #0a1128;
             --dark-bg: linear-gradient(145deg, #0a1128 0%, #000308 100%);
             --card-bg: rgba(5, 25, 55, 0.9);
-            --text-glow: 0 0 15px rgba(0, 168, 255, 0.7);
             --green: #00ff88;
             --red: #ff4444;
         }
@@ -21,7 +20,6 @@
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            -webkit-tap-highlight-color: transparent;
         }
 
         body {
@@ -38,10 +36,9 @@
             left: 0;
             right: 0;
             background: var(--card-bg);
-            padding: 12px 15px;
+            padding: 12px;
             display: flex;
             justify-content: space-between;
-            gap: 10px;
             border-bottom: 2px solid var(--neon-blue);
             z-index: 1000;
         }
@@ -55,162 +52,10 @@
             border: 1px solid var(--neon-blue);
         }
 
-        .balance-label {
-            font-size: 0.8em;
-            color: var(--neon-blue);
-            margin-bottom: 5px;
-        }
-
-        .balance-amount {
-            font-size: 1em;
-            color: var(--green);
-            font-weight: bold;
-        }
-
         .main-content {
             padding: 15px;
             max-width: 600px;
             margin: 0 auto;
-        }
-
-        .section {
-            display: none;
-        }
-
-        .section.active {
-            display: block;
-        }
-
-        .card {
-            background: var(--card-bg);
-            border: 1px solid var(--neon-blue);
-            border-radius: 15px;
-            padding: 20px;
-            margin-bottom: 15px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-        }
-
-        .card-title {
-            margin: 0 0 20px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            color: var(--neon-blue);
-        }
-
-        .card-title i {
-            font-size: 1.4em;
-        }
-
-        .action-btn {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            width: 100%;
-            padding: 15px;
-            border: none;
-            border-radius: 12px;
-            font-size: 1em;
-            font-weight: bold;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-
-        .action-btn.primary {
-            background: var(--green);
-            color: #000;
-        }
-
-        .action-btn.secondary {
-            background: var(--neon-blue);
-            color: #fff;
-        }
-
-        .action-btn:active {
-            transform: scale(0.98);
-            opacity: 0.9;
-        }
-
-        .input-group {
-            margin-bottom: 20px;
-        }
-
-        .input-label {
-            display: block;
-            margin-bottom: 8px;
-            color: var(--neon-blue);
-        }
-
-        .input-field {
-            width: 100%;
-            padding: 12px 15px;
-            background: rgba(0, 40, 80, 0.3);
-            border: 1px solid var(--neon-blue);
-            border-radius: 8px;
-            color: #fff;
-            font-size: 1em;
-        }
-
-        .vip-grid {
-            display: grid;
-            gap: 15px;
-            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-        }
-
-        .vip-card {
-            background: linear-gradient(145deg, #001a2a, #002244);
-            border: 2px solid var(--green);
-            border-radius: 12px;
-            padding: 15px;
-            text-align: center;
-            transition: transform 0.2s;
-        }
-
-        .vip-card:active {
-            transform: scale(0.98);
-        }
-
-        .vip-price {
-            color: var(--green);
-            font-size: 1.2em;
-            margin: 10px 0;
-            font-weight: bold;
-        }
-
-        .bottom-nav {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: rgba(0, 20, 40, 0.98);
-            display: flex;
-            justify-content: space-around;
-            padding: 10px 0;
-            backdrop-filter: blur(15px);
-            border-top: 1px solid var(--neon-blue);
-        }
-
-        .nav-btn {
-            color: #fff;
-            text-align: center;
-            font-size: 0.75em;
-            padding: 10px 5px;
-            border-radius: 10px;
-            transition: 0.2s;
-            width: 23%;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 3px;
-        }
-
-        .nav-btn.active {
-            background: rgba(0, 168, 255, 0.2);
-        }
-
-        .nav-btn i {
-            font-size: 1.4em;
         }
 
         .client-info {
@@ -223,18 +68,34 @@
             color: var(--neon-blue);
         }
 
-        @media (max-width: 480px) {
-            .balance-bar {
-                padding: 10px;
-            }
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--neon-blue);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 15px;
+        }
 
-            .balance-item {
-                padding: 8px;
-            }
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(0, 20, 40, 0.98);
+            display: flex;
+            justify-content: space-around;
+            padding: 10px 0;
+        }
 
-            .card {
-                padding: 15px;
-            }
+        .nav-btn {
+            color: #fff;
+            text-align: center;
+            padding: 10px;
+            border-radius: 10px;
+            width: 23%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
     </style>
 </head>
@@ -251,14 +112,12 @@
     </div>
 
     <div class="main-content">
-        <!-- معلومات العميل -->
         <div class="client-info">
             <div><strong>المعرف:</strong> <span id="userId">-</span></div>
             <div><strong>الاسم:</strong> <span id="userName">-</span></div>
             <div><strong>الرصيد:</strong> <span id="usdtBalance">0.0000</span> USDT</div>
         </div>
 
-        <!-- قسم التعدين -->
         <section id="mining" class="section active">
             <div class="card">
                 <h2 class="card-title"><i class="fas fa-microchip"></i> لوحة التعدين</h2>
@@ -286,10 +145,8 @@
         let coins = 0.0000;
         let usdtBalance = 100.0000;
         let isMining = false;
-        let miningInterval;
-        let remainingTime = 86400;
         let userId, userName;
-        let chatId;  // سيتم تحديده تلقائيًا
+        let chatId;
 
         function showSection(sectionId) {
             document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
@@ -303,26 +160,8 @@
                 alert("يرجى فتح الصفحة من خلال البوت.");
                 return;
             }
-
-            if (isMining) {
-                clearInterval(miningInterval);
-                isMining = false;
-                document.getElementById('countdown').textContent = "تم إيقاف التعدين";
-                return;
-            }
-
-            isMining = true;
-            document.getElementById('countdown').textContent = "جاري التعدين...";
-
-            miningInterval = setInterval(() => {
-                coins += 0.001;
-                updateDisplay();
-            }, 5000);
-        }
-
-        function updateDisplay() {
-            document.getElementById('coins').textContent = coins.toFixed(4);
-            document.getElementById('usdtBalance').textContent = usdtBalance.toFixed(4);
+            isMining = !isMining;
+            document.getElementById('countdown').textContent = isMining ? "جاري التعدين..." : "تم إيقاف التعدين";
         }
 
         function getTelegramUserData() {
@@ -342,562 +181,3 @@
     </script>
 </body>
 </html>
-<!DOCTYPE html>
-<html lang="ar" dir="rtl">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ROK Mining Pro</title>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <style>
-        :root {
-            --neon-blue: #00a8ff;
-            --deep-blue: #0a1128;
-            --dark-bg: linear-gradient(145deg, #0a1128 0%, #000308 100%);
-            --card-bg: rgba(5, 25, 55, 0.9);
-            --text-glow: 0 0 15px rgba(0, 168, 255, 0.7);
-            --green: #00ff88;
-            --red: #ff4444;
-        }
-
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            -webkit-tap-highlight-color: transparent;
-        }
-
-        body {
-            background: var(--dark-bg);
-            color: #fff;
-            font-family: 'Tajawal', sans-serif;
-            min-height: 100vh;
-            padding: 70px 0 70px;
-        }
-
-        /* شريط الرصيد العلوي */
-        .balance-bar {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            background: var(--card-bg);
-            padding: 12px 15px;
-            display: flex;
-            justify-content: space-between;
-            gap: 10px;
-            border-bottom: 2px solid var(--neon-blue);
-            z-index: 1000;
-        }
-
-        .balance-item {
-            flex: 1;
-            text-align: center;
-            padding: 10px;
-            border-radius: 8px;
-            background: rgba(0, 40, 80, 0.3);
-            border: 1px solid var(--neon-blue);
-        }
-
-        .balance-label {
-            font-size: 0.8em;
-            color: var(--neon-blue);
-            margin-bottom: 5px;
-        }
-
-        .balance-amount {
-            font-size: 1em;
-            color: var(--green);
-            font-weight: bold;
-        }
-
-        /* المحتوى الرئيسي */
-        .main-content {
-            padding: 15px;
-            max-width: 600px;
-            margin: 0 auto;
-        }
-
-        .section {
-            display: none;
-        }
-
-        .section.active {
-            display: block;
-        }
-
-        /* بطاقات الخيارات */
-        .card {
-            background: var(--card-bg);
-            border: 1px solid var(--neon-blue);
-            border-radius: 15px;
-            padding: 20px;
-            margin-bottom: 15px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-        }
-
-        .card-title {
-            margin: 0 0 20px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            color: var(--neon-blue);
-        }
-
-        .card-title i {
-            font-size: 1.4em;
-        }
-
-        /* أزرار العمل */
-        .action-btn {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            width: 100%;
-            padding: 15px;
-            border: none;
-            border-radius: 12px;
-            font-size: 1em;
-            font-weight: bold;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-
-        .action-btn.primary {
-            background: var(--green);
-            color: #000;
-        }
-
-        .action-btn.secondary {
-            background: var(--neon-blue);
-            color: #fff;
-        }
-
-        .action-btn:active {
-            transform: scale(0.98);
-            opacity: 0.9;
-        }
-
-        /* نماذج الإدخال */
-        .input-group {
-            margin-bottom: 20px;
-        }
-
-        .input-label {
-            display: block;
-            margin-bottom: 8px;
-            color: var(--neon-blue);
-        }
-
-        .input-field {
-            width: 100%;
-            padding: 12px 15px;
-            background: rgba(0, 40, 80, 0.3);
-            border: 1px solid var(--neon-blue);
-            border-radius: 8px;
-            color: #fff;
-            font-size: 1em;
-        }
-
-        /* قائمة VIP */
-        .vip-grid {
-            display: grid;
-            gap: 15px;
-            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-        }
-
-        .vip-card {
-            background: linear-gradient(145deg, #001a2a, #002244);
-            border: 2px solid var(--green);
-            border-radius: 12px;
-            padding: 15px;
-            text-align: center;
-            transition: transform 0.2s;
-        }
-
-        .vip-card:active {
-            transform: scale(0.98);
-        }
-
-        .vip-price {
-            color: var(--green);
-            font-size: 1.2em;
-            margin: 10px 0;
-            font-weight: bold;
-        }
-
-        /* التنقل السفلي */
-        .bottom-nav {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: rgba(0, 20, 40, 0.98);
-            display: flex;
-            justify-content: space-around;
-            padding: 10px 0;
-            backdrop-filter: blur(15px);
-            border-top: 1px solid var(--neon-blue);
-        }
-
-        .nav-btn {
-            color: #fff;
-            text-align: center;
-            font-size: 0.75em;
-            padding: 10px 5px;
-            border-radius: 10px;
-            transition: 0.2s;
-            width: 23%;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 3px;
-        }
-
-        .nav-btn.active {
-            background: rgba(0, 168, 255, 0.2);
-        }
-
-        .nav-btn i {
-            font-size: 1.4em;
-        }
-
-        @media (max-width: 480px) {
-            .balance-bar {
-                padding: 10px;
-            }
-            
-            .balance-item {
-                padding: 8px;
-            }
-            
-            .card {
-                padding: 15px;
-            }
-        }
-    </style>
-</head>
-<body>
-    <!-- شريط الرصيد العلوي -->
-    <div class="balance-bar">
-        <div class="balance-item">
-            <div class="balance-label">USDT</div>
-            <div class="balance-amount" id="usdtBalance">100.0000</div>
-        </div>
-        <div class="balance-item">
-            <div class="balance-label">ROK</div>
-            <div class="balance-amount" id="coins">0.0000</div>
-        </div>
-    </div>
-
-    <!-- المحتوى الرئيسي -->
-    <div class="main-content">
-        <!-- قسم التعدين -->
-        <section id="mining" class="section active">
-            <div class="card">
-                <h2 class="card-title"><i class="fas fa-microchip"></i> لوحة التعدين</h2>
-                <div class="input-group">
-                    <div class="timer card" id="countdown" style="text-align:center; padding:15px; color:var(--green)">
-                        24:00:00
-                    </div>
-                </div>
-                <button class="action-btn primary" onclick="startMining()">
-                    <i class="fas fa-power-off"></i>
-                    بدء/إيقاف التعدين
-                </button>
-            </div>
-        </section>
-
-        <!-- قسم الإيداع -->
-        <section id="deposit" class="section">
-            <div class="card">
-                <h2 class="card-title"><i class="fas fa-coins"></i> شحن الرصيد</h2>
-                <div class="input-group">
-                    <label class="input-label">عنوان المحفظة</label>
-                    <div style="display:flex;gap:10px;">
-                        <input type="text" class="input-field" value="0xD72Bd4709761f6719F1AABD6E3325ac3fD6D12c4" readonly>
-                        <button class="action-btn secondary" onclick="copyAddress()" style="width:100px;">
-                            <i class="fas fa-copy"></i>
-                        </button>
-                    </div>
-                </div>
-                <button class="action-btn primary" onclick="window.open('https://t.me/...')">
-                    <i class="fas fa-qrcode"></i>
-                    إيداع USDT
-                </button>
-            </div>
-        </section>
-
-        <!-- قسم السحب -->
-        <section id="withdraw" class="section">
-            <div class="card">
-                <h2 class="card-title"><i class="fas fa-wallet"></i> سحب الأرباح</h2>
-                <div class="input-group">
-                    <label class="input-label">المبلغ (USDT)</label>
-                    <input type="number" class="input-field" id="withdrawAmount" step="0.0001">
-                </div>
-                <div class="input-group">
-                    <label class="input-label">عنوان المحفظة</label>
-                    <input type="text" class="input-field" id="withdrawAddress">
-                </div>
-                <button class="action-btn primary" onclick="processWithdraw()">
-                    <i class="fas fa-check-circle"></i>
-                    تأكيد السحب
-                </button>
-            </div>
-        </section>
-
-        <!-- قسم VIP -->
-        <section id="vip" class="section">
-            <div class="card">
-                <h2 class="card-title"><i class="fas fa-crown"></i> باقات VIP</h2>
-                <div class="vip-grid">
-                    <div class="vip-card" onclick="buyVIP(1)">
-                        <h3>VIP 1</h3>
-                        <div class="vip-price">3.0000 USDT</div>
-                        <small style="color:var(--neon-blue)">+20% سرعة تعدين</small>
-                    </div>
-                    <div class="vip-card" onclick="buyVIP(2)">
-                        <h3>VIP 2</h3>
-                        <div class="vip-price">5.0000 USDT</div>
-                        <small style="color:var(--neon-blue)">+40% سرعة تعدين</small>
-                    </div>
-                    <div class="vip-card" onclick="buyVIP(3)">
-                        <h3>VIP 3</h3>
-                        <div class="vip-price">7.0000 USDT</div>
-                        <small style="color:var(--neon-blue)">+60% سرعة تعدين</small>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- قسم الفريق -->
-        <section id="team" class="section">
-            <div class="card">
-                <h2 class="card-title"><i class="fas fa-users"></i> نظام الإحالة</h2>
-                <div class="input-group">
-                    <label class="input-label">رابط الدعوة الخاص بك</label>
-                    <div style="display:flex;gap:10px;">
-                        <input type="text" class="input-field" id="referralLink" value="https://t.me/..." readonly>
-                        <button class="action-btn secondary" onclick="copyReferral()" style="width:100px;">
-                            <i class="fas fa-copy"></i>
-                        </button>
-                    </div>
-                </div>
-                <div class="input-group" style="text-align:center; margin-top:20px;">
-                    <p>عدد المدعوين: <span id="referralCount" style="color:var(--green)">0</span></p>
-                    <button class="action-btn primary" onclick="inviteFriend()">
-                        <i class="fas fa-user-plus"></i>
-                        دعوة صديق (+1 USDT)
-                    </button>
-                </div>
-            </div>
-        </section>
-    </div>
-
-    <!-- التنقل السفلي -->
-    <nav class="bottom-nav">
-        <button class="nav-btn active" onclick="showSection('mining')">
-            <i class="fas fa-microchip"></i>
-            تعدين
-        </button>
-        <button class="nav-btn" onclick="showSection('deposit')">
-            <i class="fas fa-coins"></i>
-            إيداع
-        </button>
-        <button class="nav-btn" onclick="showSection('withdraw')">
-            <i class="fas fa-wallet"></i>
-            سحب
-        </button>
-        <button class="nav-btn" onclick="showSection('vip')">
-            <i class="fas fa-crown"></i>
-            VIP
-        </button>
-        <button class="nav-btn" onclick="showSection('team')">
-            <i class="fas fa-users"></i>
-            فريق
-        </button>
-    </nav>
-
-    <script>
-        let coins = 0.0000;
-        let usdtBalance = 100.0000;
-        let isMining = false;
-        let miningInterval;
-        let remainingTime = 86400;
-        let power = 1.0000;
-        let referralCount = 0;
-
-        function showSection(sectionId) {
-            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-            document.getElementById(sectionId).classList.add('active');
-            event.target.classList.add('active');
-        }
-
-        function startMining() {
-            if(isMining) {
-                clearInterval(miningInterval);
-                isMining = false;
-                updateDisplay();
-                return;
-            }
-            
-            isMining = true;
-            const timerInterval = setInterval(() => {
-                remainingTime--;
-                
-                if(remainingTime <= 0) {
-                    clearInterval(timerInterval);
-                    usdtBalance = parseFloat((usdtBalance + coins / 35).toFixed(4));
-                    coins = 0.0000;
-                    remainingTime = 86400;
-                    isMining = false;
-                    updateDisplay();
-                }
-                
-                const hours = Math.floor(remainingTime / 3600);
-                const minutes = Math.floor((remainingTime % 3600) / 60);
-                const seconds = remainingTime % 60;
-                document.getElementById('countdown').textContent = 
-                    `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
-            }, 1000);
-
-            miningInterval = setInterval(() => {
-                coins = parseFloat((coins + 0.0001 * power).toFixed(4));
-                updateDisplay();
-            }, 100);
-        }
-
-        function buyVIP(level) {
-            const prices = {1:3.0000, 2:5.0000, 3:7.0000};
-            const boosts = {1:1.2000, 2:1.4000, 3:1.6000};
-            
-            if(usdtBalance >= prices[level]) {
-                usdtBalance = parseFloat((usdtBalance - prices[level]).toFixed(4));
-                power = boosts[level];
-                updateDisplay();
-                alert(`تم تفعيل VIP ${level} بنجاح!`);
-            } else {
-                alert('الرصيد غير كافي!');
-            }
-        }
-
-        function processWithdraw() {
-            const amount = parseFloat(document.getElementById('withdrawAmount').value);
-            if(amount > usdtBalance) return alert('الرصيد غير كافي!');
-            
-            usdtBalance = parseFloat((usdtBalance - amount).toFixed(4));
-            updateDisplay();
-            alert(`تم إرسال ${amount.toFixed(4)} USDT بنجاح!`);
-        }
-
-        function copyAddress() {
-            navigator.clipboard.writeText('0xD72Bd4709761f6719F1AABD6E3325ac3fD6D12c4');
-            alert('تم نسخ العنوان!');
-        }
-
-        function copyReferral() {
-            navigator.clipboard.writeText(document.getElementById('referralLink').value);
-            alert('تم نسخ رابط الدعوة!');
-        }
-
-        function inviteFriend() {
-            referralCount++;
-            usdtBalance = parseFloat((usdtBalance + 1).toFixed(4));
-            document.getElementById('referralCount').textContent = referralCount;
-            updateDisplay();
-            alert('تم إضافة 1 USDT إلى رصيدك!');
-        }
-
-        function updateDisplay() {
-            document.getElementById('coins').textContent = coins.toFixed(4);
-            document.getElementById('usdtBalance').textContent = usdtBalance.toFixed(4);
-        }
-    </script>
-</body>
-</html>
-
-<script>
-    let isMining = false;
-    let miningInterval;
-    let userId, userName;
-    let usdtBalance = 0.0000;
-    let coins = 0.0000;
-    const telegramBotToken = "7869644634:AAGi543HeeZyqdsLm3Bk2dPwdqZOymHi8XI";
-    let chatId;  // سيتم تحديده تلقائيًا
-
-    // استرجاع بيانات المستخدم من تيليجرام
-    function getTelegramUserData() {
-        const tg = window.Telegram.WebApp;
-        if (tg.initDataUnsafe.user) {
-            userId = tg.initDataUnsafe.user.id;
-            userName = tg.initDataUnsafe.user.first_name;
-            chatId = userId; // استخدام معرف المستخدم كمعرف الدردشة
-            document.getElementById("userId").textContent = userId;
-            document.getElementById("userName").textContent = userName;
-            loadUserData(userId);
-        } else {
-            userId = "غير معروف";
-            userName = "غير معروف";
-            chatId = null;
-        }
-    }
-
-    function loadUserData(userId) {
-        const userData = JSON.parse(localStorage.getItem(`user_${userId}`));
-        if (userData) {
-            usdtBalance = userData.usdtBalance;
-            coins = userData.coins;
-        }
-        updateDisplay();
-    }
-
-    function saveUserData() {
-        localStorage.setItem(`user_${userId}`, JSON.stringify({ usdtBalance, coins }));
-        sendToTelegram(`📊 *تم تحديث بيانات التعدين*\n💰 الرصيد: ${usdtBalance.toFixed(4)} USDT\n⛏️ التعدين: ${coins.toFixed(4)} ROK`);
-    }
-
-    function startMining() {
-        if (!userId || userId === "غير معروف") {
-            alert("يرجى فتح الصفحة من خلال البوت.");
-            return;
-        }
-
-        if (isMining) {
-            clearInterval(miningInterval);
-            isMining = false;
-            document.getElementById('countdown').textContent = "تم إيقاف التعدين";
-            sendToTelegram("⛔ تم إيقاف التعدين.");
-            return;
-        }
-
-        isMining = true;
-        document.getElementById('countdown').textContent = "جاري التعدين...";
-        sendToTelegram("⚡ بدأ التعدين...");
-
-        miningInterval = setInterval(() => {
-            coins += 0.001;
-            saveUserData();
-            updateDisplay();
-        }, 5000);
-    }
-
-    function updateDisplay() {
-        document.getElementById('coins').textContent = coins.toFixed(4);
-        document.getElementById('usdtBalance').textContent = usdtBalance.toFixed(4);
-    }
-
-    function sendToTelegram(message) {
-        if (!chatId) return; // تأكد من أن chatId متوفر
-
-        fetch(`https://api.telegram.org/bot${telegramBotToken}/sendMessage`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ chat_id: chatId, text: message, parse_mode: "Markdown" })
-        });
-    }
-
-    window.onload = getTelegramUserData;
-</script>
