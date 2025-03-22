@@ -9,11 +9,9 @@
     <style>
         :root {
             --neon-blue: #00a8ff;
-            --deep-blue: #0a1128;
             --dark-bg: linear-gradient(145deg, #0a1128 0%, #000308 100%);
             --card-bg: rgba(5, 25, 55, 0.9);
             --green: #00ff88;
-            --red: #ff4444;
         }
 
         * {
@@ -30,42 +28,10 @@
             padding: 70px 0 70px;
         }
 
-        .balance-bar {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            background: var(--card-bg);
-            padding: 12px;
-            display: flex;
-            justify-content: space-between;
-            border-bottom: 2px solid var(--neon-blue);
-            z-index: 1000;
-        }
-
-        .balance-item {
-            flex: 1;
-            text-align: center;
-            padding: 10px;
-            border-radius: 8px;
-            background: rgba(0, 40, 80, 0.3);
-            border: 1px solid var(--neon-blue);
-        }
-
         .main-content {
             padding: 15px;
             max-width: 600px;
             margin: 0 auto;
-        }
-
-        .client-info {
-            background: var(--card-bg);
-            padding: 15px;
-            border-radius: 10px;
-            border: 1px solid var(--neon-blue);
-            text-align: center;
-            margin-bottom: 15px;
-            color: var(--neon-blue);
         }
 
         .card {
@@ -74,58 +40,56 @@
             border-radius: 15px;
             padding: 20px;
             margin-bottom: 15px;
-        }
-
-        .bottom-nav {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: rgba(0, 20, 40, 0.98);
-            display: flex;
-            justify-content: space-around;
-            padding: 10px 0;
-        }
-
-        .nav-btn {
-            color: #fff;
             text-align: center;
+        }
+
+        .client-info {
+            background: rgba(0, 40, 80, 0.3);
             padding: 10px;
             border-radius: 10px;
-            width: 23%;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
+            border: 1px solid var(--neon-blue);
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .action-btn {
+            width: 100%;
+            padding: 15px;
+            border: none;
+            border-radius: 12px;
+            font-size: 1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .action-btn.primary {
+            background: var(--green);
+            color: #000;
+        }
+
+        .timer {
+            font-size: 1.5em;
+            color: var(--green);
+            margin-top: 10px;
         }
     </style>
 </head>
 <body>
-    <div class="balance-bar">
-        <div class="balance-item">
-            <div class="balance-label">USDT</div>
-            <div class="balance-amount" id="usdtBalance">100.0000</div>
-        </div>
-        <div class="balance-item">
-            <div class="balance-label">ROK</div>
-            <div class="balance-amount" id="coins">0.0000</div>
-        </div>
-    </div>
 
     <div class="main-content">
-        <div class="client-info">
-            <div><strong>المعرف:</strong> <span id="userId">-</span></div>
-            <div><strong>الاسم:</strong> <span id="userName">-</span></div>
-            <div><strong>الرصيد:</strong> <span id="usdtBalance">0.0000</span> USDT</div>
-        </div>
-
-        <section id="mining" class="section active">
+        <section id="mining">
             <div class="card">
                 <h2 class="card-title"><i class="fas fa-microchip"></i> لوحة التعدين</h2>
-                <div class="input-group">
-                    <div class="timer card" id="countdown" style="text-align:center; padding:15px; color:var(--green)">
-                        24:00:00
-                    </div>
+                
+                <div class="client-info">
+                    <div><strong>المعرف:</strong> <span id="userId">-</span></div>
+                    <div><strong>الاسم:</strong> <span id="userName">-</span></div>
+                    <div><strong>الرصيد:</strong> <span id="usdtBalance">0.00</span> USDT</div>
                 </div>
+
+                <div class="timer" id="countdown">00:00:00</div>
+                
                 <button class="action-btn primary" onclick="startMining()">
                     <i class="fas fa-power-off"></i>
                     بدء/إيقاف التعدين
@@ -134,34 +98,43 @@
         </section>
     </div>
 
-    <nav class="bottom-nav">
-        <button class="nav-btn active" onclick="showSection('mining')">
-            <i class="fas fa-microchip"></i>
-            تعدين
-        </button>
-    </nav>
-
     <script>
-        let coins = 0.0000;
-        let usdtBalance = 100.0000;
         let isMining = false;
-        let userId, userName;
-        let chatId;
-
-        function showSection(sectionId) {
-            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-            document.getElementById(sectionId).classList.add('active');
-            event.target.classList.add('active');
-        }
+        let miningInterval;
+        let remainingTime = 86400; // 24 ساعة
+        let userId, userName, usdtBalance = 0.00;
 
         function startMining() {
-            if (!userId || userId === "غير معروف") {
+            if (!userId || userId === "-") {
                 alert("يرجى فتح الصفحة من خلال البوت.");
                 return;
             }
-            isMining = !isMining;
-            document.getElementById('countdown').textContent = isMining ? "جاري التعدين..." : "تم إيقاف التعدين";
+
+            if (isMining) {
+                clearInterval(miningInterval);
+                isMining = false;
+                document.getElementById('countdown').textContent = "00:00:00";
+                return;
+            }
+
+            isMining = true;
+            miningInterval = setInterval(updateTimer, 1000);
+        }
+
+        function updateTimer() {
+            remainingTime--;
+            if (remainingTime <= 0) {
+                clearInterval(miningInterval);
+                isMining = false;
+                return;
+            }
+
+            const hours = Math.floor(remainingTime / 3600);
+            const minutes = Math.floor((remainingTime % 3600) / 60);
+            const seconds = remainingTime % 60;
+
+            document.getElementById('countdown').textContent =
+                `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
         }
 
         function getTelegramUserData() {
@@ -169,7 +142,6 @@
             if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
                 userId = tg.initDataUnsafe.user.id;
                 userName = tg.initDataUnsafe.user.first_name;
-                chatId = userId;
                 document.getElementById("userId").textContent = userId;
                 document.getElementById("userName").textContent = userName;
             } else {
@@ -179,5 +151,6 @@
 
         window.onload = getTelegramUserData;
     </script>
+
 </body>
 </html>
