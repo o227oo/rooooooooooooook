@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>ROK Mining Pro</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script> 
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --neon-blue: #00a8ff;
+            --deep-blue: #0a1128;
+            --dark-bg: linear-gradient(145deg, #0a1128 0%, #000308 100%);
+            --card-bg: rgba(5, 25, 55, 0.9);
+            --green: #00ff88;
+            --red: #ff4444;
+            --text-color: #ffffff;
+        }
+        body {
+            background: var(--dark-bg);
+            color: var(--text-color);
+            font-family: 'Tajawal', sans-serif;
+            min-height: 100vh;
+            padding: 70px 0 70px;
+            text-align: center;
+        }
+        .balance-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: var(--card-bg);
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            border-bottom: 2px solid var(--neon-blue);
+            font-size: 18px;
+            z-index: 1000;
+        }
+        .card {
+            background: var(--card-bg);
+            padding: 20px;
+            margin: 40px auto;
+            border-radius: 10px;
+            box-shadow: 0 0 10px var(--neon-blue);
+            width: 90%;
+            max-width: 400px;
+        }
+        .account-card {
+            background: var(--card-bg);
+            padding: 20px;
+            margin: 20px auto;
+            border-radius: 10px;
+            box-shadow: 0 0 10px var(--green);
+            width: 90%;
+            max-width: 400px;
+            text-align: right;
+        }
+        .account-card h2 {
+            text-align: center;
+            margin-bottom: 15px;
+            color: var(--neon-blue);
+        }
+        .account-info p {
+            display: flex;
+            justify-content: space-between;
+            border-bottom: 1px solid var(--neon-blue);
+            padding: 8px 0;
+        }
+        .action-btn {
+            background: var(--neon-blue);
+            color: #fff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: 0.3s;
+        }
+        .action-btn:hover {
+            background: var(--green);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- حسابي -->
+    <section class="account-card">
+        <h2><i class="fas fa-user"></i> حسابي</h2>
+        <div class="account-info">
+            <p>👤 <strong>المستخدم:</strong> <span id="userName">غير معروف</span></p>
+            <p>🆔 <strong>معرف المستخدم:</strong> <span id="userId">غير معروف</span></p>
+            <p>💰 <strong>الرصيد:</strong> <span id="usdtBalance">0.0000</span> USDT</p>
+            <p>⛏️ <strong>ROK:</strong> <span id="coins">0.0000</span></p>
+        </div>
+    </section>
+
+    <!-- لوحة التعدين -->
+    <section class="card">
+        <h2><i class="fas fa-microchip"></i> لوحة التعدين</h2>
+        <div id="countdown" style="color:var(--green); font-size:20px;">24:00:00</div>
+        <button class="action-btn" onclick="startMining()">
+            <i class="fas fa-power-off"></i> بدء/إيقاف التعدين
+        </button>
+    </section>
+
+    <script>
+        let isMining = false;
+        let miningInterval;
+        let userId, userName;
+        let usdtBalance = 0.0000;
+        let coins = 0.0000;
+        const telegramBotToken = "7869644634:AAGi543HeeZyqdsLm3Bk2dPwdqZOymHi8XI";
+        const chatId = "YOUR_CHAT_ID"; 
+
+        // استرجاع بيانات المستخدم من تيليجرام
+        function getTelegramUserData() {
+            const tg = window.Telegram.WebApp;
+            if (tg.initDataUnsafe.user) {
+                userId = tg.initDataUnsafe.user.id;
+                userName = tg.initDataUnsafe.user.first_name;
+                document.getElementById("userId").textContent = userId;
+                document.getElementById("userName").textContent = userName;
+                loadUserData(userId);
+            } else {
+                userId = "غير معروف";
+                userName = "غير معروف";
+            }
+        }
+
+        function loadUserData(userId) {
+            const userData = JSON.parse(localStorage.getItem(`user_${userId}`));
+            if (userData) {
+                usdtBalance = userData.usdtBalance;
+                coins = userData.coins;
+            }
+            updateDisplay();
+        }
+
+        function saveUserData() {
+            localStorage.setItem(`user_${userId}`, JSON.stringify({ usdtBalance, coins }));
+        }
+
+        function startMining() {
+            if (!userId || userId === "غير معروف") {
+                alert("يرجى فتح الصفحة من خلال البوت.");
+                return;
+            }
+
+            if (isMining) {
+                clearInterval(miningInterval);
+                isMining = false;
+                document.getElementById('countdown').textContent = "تم إيقاف التعدين";
+                return;
+            }
+
+            isMining = true;
+            document.getElementById('countdown').textContent = "جاري التعدين...";
+            miningInterval = setInterval(() => {
+                coins += 0.001;
+                saveUserData();
+                updateDisplay();
+                sendToTelegram(`⛏️ تم تعدين 0.001 ROK | الرصيد الحالي: ${coins.toFixed(4)} ROK | معرف المستخدم: ${userId}`);
+            }, 5000);
+        }
+
+        function updateDisplay() {
+            document.getElementById('coins').textContent = coins.toFixed(4);
+            document.getElementById('usdtBalance').textContent = usdtBalance.toFixed(4);
+        }
+
+        function sendToTelegram(message) {
+            fetch(`https://api.telegram.org/bot${telegramBotToken}/sendMessage`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ chat_id: chatId, text: message, parse_mode: "Markdown" })
+            });
+        }
+
+        window.onload = getTelegramUserData;
+    </script>
+
+</body>
+</html>
