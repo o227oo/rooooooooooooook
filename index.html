@@ -12,6 +12,7 @@
             --dark-bg: linear-gradient(145deg, #0a1128 0%, #000308 100%);
             --card-bg: rgba(5, 25, 55, 0.9);
             --green: #00ff88;
+            --bottom-nav-bg: rgba(0, 20, 40, 0.95);
         }
 
         * {
@@ -25,7 +26,7 @@
             color: #fff;
             font-family: 'Tajawal', sans-serif;
             min-height: 100vh;
-            padding: 70px 0 70px;
+            padding-bottom: 70px;
         }
 
         .main-content {
@@ -73,6 +74,38 @@
             color: var(--green);
             margin-top: 10px;
         }
+
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: var(--bottom-nav-bg);
+            display: flex;
+            justify-content: space-around;
+            padding: 10px 0;
+            border-top: 2px solid var(--neon-blue);
+        }
+
+        .nav-btn {
+            color: #fff;
+            text-align: center;
+            padding: 10px;
+            border-radius: 10px;
+            width: 25%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            transition: 0.2s;
+        }
+
+        .nav-btn.active {
+            background: rgba(0, 168, 255, 0.3);
+        }
+
+        .nav-btn i {
+            font-size: 1.4em;
+        }
     </style>
 </head>
 <body>
@@ -90,34 +123,43 @@
 
                 <div class="timer" id="countdown">00:00:00</div>
                 
-                <button class="action-btn primary" onclick="startMining()">
-                    <i class="fas fa-power-off"></i>
-                    بدء/إيقاف التعدين
+                <button class="action-btn primary" id="miningBtn" onclick="toggleMining()">
+                    <i class="fas fa-power-off"></i> بدء التعدين
                 </button>
             </div>
         </section>
     </div>
 
+    <nav class="bottom-nav">
+        <button class="nav-btn active">
+            <i class="fas fa-microchip"></i> تعدين
+        </button>
+    </nav>
+
     <script>
         let isMining = false;
         let miningInterval;
         let remainingTime = 86400; // 24 ساعة
-        let userId, userName, usdtBalance = 0.00;
+        let userId, userName;
+        let usdtBalance = 0.00;
 
-        function startMining() {
+        function toggleMining() {
             if (!userId || userId === "-") {
                 alert("يرجى فتح الصفحة من خلال البوت.");
                 return;
             }
 
+            const miningBtn = document.getElementById("miningBtn");
+            
             if (isMining) {
                 clearInterval(miningInterval);
                 isMining = false;
-                document.getElementById('countdown').textContent = "00:00:00";
+                miningBtn.innerHTML = '<i class="fas fa-power-off"></i> بدء التعدين';
                 return;
             }
 
             isMining = true;
+            miningBtn.innerHTML = '<i class="fas fa-pause"></i> إيقاف التعدين';
             miningInterval = setInterval(updateTimer, 1000);
         }
 
@@ -144,6 +186,7 @@
                 userName = tg.initDataUnsafe.user.first_name;
                 document.getElementById("userId").textContent = userId;
                 document.getElementById("userName").textContent = userName;
+                document.getElementById("usdtBalance").textContent = usdtBalance.toFixed(2);
             } else {
                 alert("يرجى فتح الصفحة من خلال البوت.");
             }
