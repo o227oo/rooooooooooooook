@@ -476,38 +476,84 @@
 </html>
 
 <script>
-    // إضافة كود حفظ واسترجاع البيانات هنا
-    function saveUserData(userId, usdtBalance, coins) {
-        localStorage.setItem(`user_${userId}`, JSON.stringify({
-            usdtBalance: usdtBalance,
-            coins: coins
-        }));
+    let isMining = false;
+    let miningInterval;
+    let userId, userName;
+    let usdtBalance = 0.0000;
+    let coins = 0.0000;
+    const telegramBotToken = "7869644634:AAGi543HeeZyqdsLm3Bk2dPwdqZOymHi8XI";
+    let chatId;  // سيتم تحديده تلقائيًا
+
+    // استرجاع بيانات المستخدم من تيليجرام
+    function getTelegramUserData() {
+        const tg = window.Telegram.WebApp;
+        if (tg.initDataUnsafe.user) {
+            userId = tg.initDataUnsafe.user.id;
+            userName = tg.initDataUnsafe.user.first_name;
+            chatId = userId; // استخدام معرف المستخدم كمعرف الدردشة
+            document.getElementById("userId").textContent = userId;
+            document.getElementById("userName").textContent = userName;
+            loadUserData(userId);
+        } else {
+            userId = "غير معروف";
+            userName = "غير معروف";
+            chatId = null;
+        }
     }
 
     function loadUserData(userId) {
         const userData = JSON.parse(localStorage.getItem(`user_${userId}`));
         if (userData) {
-            return {
-                usdtBalance: userData.usdtBalance || 0.0000,
-                coins: userData.coins || 0.0000
-            };
-        } else {
-            return {
-                usdtBalance: 0.0000,
-                coins: 0.0000
-            };
+            usdtBalance = userData.usdtBalance;
+            coins = userData.coins;
         }
+        updateDisplay();
     }
 
-    function updateDisplay(userId) {
-        const userData = loadUserData(userId);
-        document.getElementById('usdtBalance').textContent = userData.usdtBalance.toFixed(4);
-        document.getElementById('coins').textContent = userData.coins.toFixed(4);
+    function saveUserData() {
+        localStorage.setItem(`user_${userId}`, JSON.stringify({ usdtBalance, coins }));
+        sendToTelegram(`📊 *تم تحديث بيانات التعدين*\n💰 الرصيد: ${usdtBalance.toFixed(4)} USDT\n⛏️ التعدين: ${coins.toFixed(4)} ROK`);
     }
 
-    // تعريف معرف المستخدم (استبدله بالمعرف الفعلي)
-    let userId = "123456";
-    updateDisplay(userId);
+    function startMining() {
+        if (!userId || userId === "غير معروف") {
+            alert("يرجى فتح الصفحة من خلال البوت.");
+            return;
+        }
+
+        if (isMining) {
+            clearInterval(miningInterval);
+            isMining = false;
+            document.getElementById('countdown').textContent = "تم إيقاف التعدين";
+            sendToTelegram("⛔ تم إيقاف التعدين.");
+            return;
+        }
+
+        isMining = true;
+        document.getElementById('countdown').textContent = "جاري التعدين...";
+        sendToTelegram("⚡ بدأ التعدين...");
+
+        miningInterval = setInterval(() => {
+            coins += 0.001;
+            saveUserData();
+            updateDisplay();
+        }, 5000);
+    }
+
+    function updateDisplay() {
+        document.getElementById('coins').textContent = coins.toFixed(4);
+        document.getElementById('usdtBalance').textContent = usdtBalance.toFixed(4);
+    }
+
+    function sendToTelegram(message) {
+        if (!chatId) return; // تأكد من أن chatId متوفر
+
+        fetch(`https://api.telegram.org/bot${telegramBotToken}/sendMessage`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ chat_id: chatId, text: message, parse_mode: "Markdown" })
+        });
+    }
+
+    window.onload = getTelegramUserData;
 </script>
-</body>
-</html>
