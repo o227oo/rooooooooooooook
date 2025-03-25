@@ -902,409 +902,295 @@ function startMining() {
     saveUserData();
     updateDisplay();
 }
-</script>
-<script>
-// ... (ابق على تعريف userData كما هو)
-
-function startMining() {
-    const miningBtn = document.querySelector('.mining-btn');
-    const countdownElement = document.getElementById('countdown');
-    
-    if (userData.isMining) {
-        clearInterval(miningInterval);
-        miningBtn.classList.remove('active');
-        userData.isMining = false;
-        saveUserData();
-        return;
-    }
-
-    userData.isMining = true;
-    miningBtn.classList.add('active');
-    
-    const startTimestamp = Date.now() - (86400 - userData.remainingTime) * 1000;
-    
-    // دالة التحديث الرئيسية
-    function updateMining() {
-        const currentTime = Date.now();
-        const elapsedSeconds = Math.floor((currentTime - startTimestamp) / 1000);
-        userData.remainingTime = Math.max(86400 - elapsedSeconds, 0);
-        
-        // تحديث العداد
-        const hours = Math.floor(userData.remainingTime / 3600);
-        const minutes = Math.floor((userData.remainingTime % 3600) / 60);
-        const seconds = userData.remainingTime % 60;
-        
-        countdownElement.textContent = 
-            `${String(hours).padStart(2, '0')}:` +
-            `${String(minutes).padStart(2, '0')}:` +
-            `${String(seconds).padStart(2, '0')}`;
-        
-        // حساب العملات
-        if (userData.remainingTime > 0) {
-            userData.coins += 0.0001 * userData.power;
-            userData.coins = Number(userData.coins.toFixed(4));
-            document.getElementById('coins').textContent = userData.coins.toFixed(4);
-        } else {
-            endMining();
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لوحة البيانات - حساب المساحة</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --main-color: #2c3e50;
+            --secondary-color: #3498db;
         }
-    }
-
-    // بدء العد
-    miningInterval = setInterval(updateMining, 1000);
-    updateMining(); // تحديث فوري
-    saveUserData();
-}
-
-function endMining() {
-    clearInterval(miningInterval);
-    userData.usdtBalance += Number((userData.coins / 35).toFixed(4));
-    userData.coins = 0;
-    userData.remainingTime = 86400;
-    userData.isMining = false;
-    
-    document.querySelector('.mining-btn').classList.remove('active');
-    document.getElementById('countdown').textContent = '24:00:00';
-    updateDisplay();
-    saveUserData();
-}
-
-// ... (ابق على بقية الدوال كما هي)
-</script>
-<!-- داخل قسم التعدين -->
-<section id="mining" class="section active">
-    <div class="card">
-        <!-- معلومات المستخدم المحدثة -->
-        <div class="user-info-card">
-            <div class="user-info-header">
-                <i class="fas fa-wallet"></i>
-                <h3>محفظة المستخدم</h3>
-            </div>
-            <div class="user-info-grid">
-                <div class="info-item">
-                    <span class="info-label">اسم المستخدم:</span>
-                    <span class="info-value" id="username"></span>
-                </div>
-                <div class="info-item">
-                    <span class="info-label">إعادة شحن المحفظة:</span>
-                    <span class="info-value" id="depositWallet">0.0000 USDT</span>
-                </div>
-                <div class="info-item">
-                    <span class="info-label">محفظة الربح:</span>
-                    <span class="info-value" id="profitWallet">0.0000 USDT</span>
-                </div>
-            </div>
-        </div>
-
-        <!-- لوحة التعدين المعدلة -->
-        <div class="mining-panel">
-            <div class="mining-header">
-                <h2><i class="fas fa-hard-hat"></i> لوحة التعدين</h2>
-                <div class="mining-status">
-                    <span id="miningStatus">غير نشط</span>
-                    <div class="status-indicator"></div>
-                </div>
-            </div>
-            <div class="countdown-container">
-                <div class="timer" id="countdown">24:00:00</div>
-                <div class="coins-counter">
-                    <i class="fas fa-coins"></i>
-                    <span id="coinsCounter">0.0000 ROK</span>
-                </div>
-            </div>
-            <button class="action-btn primary mining-btn" onclick="startMining()">
-                <i class="fas fa-play"></i>
-                بدء التشغيل
-            </button>
-        </div>
-    </div>
-</section>
-
-<style>
-/* أنماط محدثة */
-.user-info-card {
-    background: linear-gradient(145deg, #00172c, #002440);
-    border: 1px solid var(--neon-blue);
-    border-radius: 15px;
-    padding: 20px;
-    margin-bottom: 20px;
-    box-shadow: 0 4px 20px rgba(0, 168, 255, 0.15);
-}
-
-.user-info-header {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-    margin-bottom: 20px;
-}
-
-.user-info-header i {
-    font-size: 1.8em;
-    color: var(--green);
-}
-
-.user-info-header h3 {
-    margin: 0;
-    color: var(--neon-blue);
-    font-size: 1.4em;
-}
-
-.mining-panel {
-    background: linear-gradient(145deg, #00172c, #002440);
-    border: 1px solid var(--neon-blue);
-    border-radius: 15px;
-    padding: 20px;
-}
-
-.mining-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 25px;
-}
-
-.mining-status {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
-.status-indicator {
-    width: 12px;
-    height: 12px;
-    border-radius: 50%;
-    background: #ff4444;
-    box-shadow: 0 0 10px rgba(255, 68, 68, 0.3);
-}
-
-.status-indicator.active {
-    background: #00ff88;
-    box-shadow: 0 0 10px rgba(0, 255, 136, 0.3);
-}
-
-.countdown-container {
-    text-align: center;
-    margin: 25px 0;
-}
-
-.coins-counter {
-    display: inline-flex;
-    align-items: center;
-    gap: 10px;
-    margin-top: 15px;
-    padding: 10px 20px;
-    background: rgba(0, 40, 80, 0.3);
-    border-radius: 8px;
-}
-
-.coins-counter i {
-    color: var(--green);
-}
-</style>
-
-<script>
-// التعديلات على الدوال
-function updateMiningStatus() {
-    const statusElement = document.getElementById('miningStatus');
-    const indicator = document.querySelector('.status-indicator');
-    
-    if (userData.isMining) {
-        statusElement.textContent = "نشط الآن";
-        indicator.classList.add('active');
-    } else {
-        statusElement.textContent = "غير نشط";
-        indicator.classList.remove('active');
-    }
-}
-
-function startMining() {
-    // ... الكود السابق ...
-    updateMiningStatus();
-}
-
-function endMining() {
-    // ... الكود السابق ...
-    updateMiningStatus();
-}
-
-function updateDisplay() {
-    document.getElementById('username').textContent = userData.username || "ضيف";
-    document.getElementById('depositWallet').textContent = userData.totalDeposited.toFixed(4) + ' USDT';
-    document.getElementById('profitWallet').textContent = userData.totalConverted.toFixed(4) + ' USDT';
-    // ... بقية التحديثات ...
-}
-</script>
-<script>
-// توليد/جلب معرف المستخدم من تليجرام
-const tgUser = window.Telegram?.WebApp?.initDataUnsafe?.user;
-const userId = tgUser?.id ? `tg_${tgUser.id}` : `guest_${Math.random().toString(36).substr(2, 6)}`;
-
-// بيانات المستخدم الأساسية
-let userData = {
-    username: tgUser?.username ? `@${tgUser.username}` : tgUser?.first_name || 'ضيف',
-    usdtBalance: 100.0000,
-    coins: 0.0000,
-    totalDeposited: 0.0000,
-    totalConverted: 0.0000,
-    isMining: false,
-    remainingTime: 86400,
-    power: 1.0000,
-    referralCount: 0,
-    vipLevel: 0,
-    lastUpdate: new Date().toISOString()
-};
-
-// نظام التخزين المحسن
-function saveUserData() {
-    try {
-        localStorage.setItem(`rok_user_${userId}`, JSON.stringify({
-            ...userData,
-            lastUpdate: new Date().toISOString()
-        }));
-    } catch (error) {
-        console.error('خطأ في الحفظ:', error);
-        showToast('⚠️ تعذر حفظ البيانات!');
-    }
-}
-
-function loadUserData() {
-    try {
-        const savedData = localStorage.getItem(`rok_user_${userId}`);
-        if (savedData) {
-            const parsed = JSON.parse(savedData);
-            const elapsed = parsed.lastUpdate ? 
-                Math.floor((Date.now() - new Date(parsed.lastUpdate)) / 1000) : 0;
-
-            userData = {
-                ...userData, // الحفاظ على البيانات الجديدة إذا لم تكن محفوظة
-                ...parsed,
-                remainingTime: Math.max(parsed.remainingTime - elapsed, 0)
-            };
-        }
-    } catch (error) {
-        console.error('خطأ في التحميل:', error);
-        showToast('⚠️ تعذر تحميل البيانات السابقة!');
-    }
-}
-
-// تحديث واجهة المستخدم
-function updateDisplay() {
-    // معلومات المستخدم
-    document.getElementById('username').textContent = userData.username;
-    document.getElementById('userId').textContent = userId.replace('tg_', '');
-    
-    // المعلومات المالية
-    document.getElementById('depositWallet').textContent = userData.totalDeposited.toFixed(4) + ' USDT';
-    document.getElementById('profitWallet').textContent = userData.totalConverted.toFixed(4) + ' USDT';
-    document.getElementById('coins').textContent = userData.coins.toFixed(4);
-    document.getElementById('usdtBalance').textContent = userData.usdtBalance.toFixed(4);
-    
-    // حالة التعدين
-    updateMiningStatus();
-}
-
-// التهيئة الأولية
-window.addEventListener('load', () => {
-    loadUserData();
-    if (tgUser) {
-        Telegram.WebApp.ready();
-        Telegram.WebApp.expand();
         
-        // إضافة زر الرجوع لتليجرام
-        Telegram.WebApp.BackButton.show().onClick(() => {
-            Telegram.WebApp.close();
-        });
-    }
-    
-    updateDisplay();
-    if (userData.isMining) startMining();
-});
-</script>
+        body {
+            font-family: 'Tajawal', sans-serif;
+            background: #f8f9fa;
+        }
+        
+        .data-container {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 0 15px rgba(0,0,0,0.1);
+            padding: 2rem;
+            margin-top: 2rem;
+        }
+        
+        .data-item {
+            border-bottom: 2px solid #eee;
+            padding: 1rem 0;
+        }
+        
+        .data-label {
+            color: var(--main-color);
+            font-weight: 700;
+        }
+        
+        .data-value {
+            color: var(--secondary-color);
+            font-size: 1.2rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container py-5">
+        <!-- عنوان الصفحة -->
+        <h1 class="text-center mb-4">
+            <img src="https://cdn-icons-png.flaticon.com/512/1534/1534959.png" 
+                 width="50"
+                 class="me-2">
+            بيانات المستخدم
+        </h1>
+        
+        <!-- مربع البيانات الرئيسي -->
+        <div class="data-container">
+            {% if length and width and area %}
+                <!-- حالة وجود بيانات -->
+                <div class="data-item">
+                    <span class="data-label">الطول:</span>
+                    <span class="data-value">{{ length }}</span>
+                </div>
+                
+                <div class="data-item">
+                    <span class="data-label">العرض:</span>
+                    <span class="data-value">{{ width }}</span>
+                </div>
+                
+                <div class="data-item">
+                    <span class="data-label">المساحة المحسوبة:</span>
+                    <span class="data-value">{{ area }}</span>
+                </div>
+            {% else %}
+                <!-- حالة عدم وجود بيانات -->
+                <div class="alert alert-warning text-center">
+                    <i class="fas fa-exclamation-triangle me-2"></i>
+                    لا توجد بيانات متاحة حالياً!
+                </div>
+            {% endif %}
+        </div>
+    </div>
 
-<!-- التعديلات على واجهة المستخدم -->
-<div class="user-info-card">
-    <div class="user-info-header">
-        <i class="fas fa-id-card"></i>
-        <div class="user-identity">
-            <h3 id="username"></h3>
-            <div class="user-id">
-                <span class="id-label">ID:</span>
-                <span class="id-value" id="userId"></span>
+    <!-- التضمينات اللازمة -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://kit.fontawesome.com/your-fontawesome-kit.js"></script>
+</body>
+</html>
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لوحة البيانات - حساب المساحة</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --main-color: #2c3e50;
+            --secondary-color: #3498db;
+        }
+        
+        body {
+            font-family: 'Tajawal', sans-serif;
+            background: #f8f9fa;
+        }
+        
+        .data-container {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 0 15px rgba(0,0,0,0.1);
+            padding: 2rem;
+            margin-top: 2rem;
+        }
+        
+        .data-item {
+            border-bottom: 2px solid #eee;
+            padding: 1rem 0;
+        }
+        
+        .data-label {
+            color: var(--main-color);
+            font-weight: 700;
+        }
+        
+        .data-value {
+            color: var(--secondary-color);
+            font-size: 1.2rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container py-5">
+        <!-- عنوان الصفحة -->
+        <h1 class="text-center mb-4">
+            <img src="https://cdn-icons-png.flaticon.com/512/1534/1534959.png" 
+                 width="50"
+                 class="me-2">
+            بيانات المستخدم
+        </h1>
+        
+        <!-- مربع البيانات الرئيسي -->
+        <div class="data-container">
+            {% if length and width and area %}
+                <!-- حالة وجود بيانات -->
+                <div class="data-item">
+                    <span class="data-label">الطول:</span>
+                    <span class="data-value">{{ length }}</span>
+                </div>
+                
+                <div class="data-item">
+                    <span class="data-label">العرض:</span>
+                    <span class="data-value">{{ width }}</span>
+                </div>
+                
+                <div class="data-item">
+                    <span class="data-label">المساحة المحسوبة:</span>
+                    <span class="data-value">{{ area }}</span>
+                </div>
+            {% else %}
+                <!-- حالة عدم وجود بيانات -->
+                <div class="alert alert-warning text-center">
+                    <i class="fas fa-exclamation-triangle me-2"></i>
+                    لا توجد بيانات متاحة حالياً!
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- التضمينات اللازمة -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://kit.fontawesome.com/your-fontawesome-kit.js"></script>
+</body>
+</html>
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>الملف الشخصي</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .profile-card {
+            background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        .wallet-box {
+            border: 2px dashed #dee2e6;
+            border-radius: 10px;
+            background: #f8f9fa;
+        }
+        .copy-icon {
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .copy-icon:hover {
+            transform: scale(1.1);
+        }
+    </style>
+</head>
+<body class="py-5 bg-light">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="profile-card p-4">
+                    <!-- معلومات المستخدم -->
+                    <div class="text-center mb-4">
+                        <h2 class="mb-3">
+                            <i class="fas fa-user-circle me-2"></i>
+                            {{ full_name }}
+                        </h2>
+                        <div class="text-muted">
+                            @{{ username }} | ID: {{ user_id }}
+                        </div>
+                    </div>
+
+                    <!-- المحافظ -->
+                    <div class="row g-4">
+                        <div class="col-md-6">
+                            <div class="wallet-box p-3">
+                                <div class="d-flex justify-content-between">
+                                    <span class="fw-bold text-primary">
+                                        <i class="fas fa-wallet me-2"></i>
+                                        محفظة الإيداع
+                                    </span>
+                                    <i class="fas fa-copy copy-icon" 
+                                       onclick="copyToClipboard('{{ deposit_wallet }}')"></i>
+                                </div>
+                                <div class="text-truncate mt-2">
+                                    {{ deposit_wallet }}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="wallet-box p-3">
+                                <div class="d-flex justify-content-between">
+                                    <span class="fw-bold text-success">
+                                        <i class="fas fa-coins me-2"></i>
+                                        محفظة الأرباح
+                                    </span>
+                                    <i class="fas fa-copy copy-icon" 
+                                       onclick="copyToClipboard('{{ profit_wallet }}')"></i>
+                                </div>
+                                <div class="text-truncate mt-2">
+                                    {{ profit_wallet }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- الإحصائيات -->
+                    <div class="row mt-4 g-3">
+                        <div class="col-md-6">
+                            <div class="bg-info p-3 rounded-3 text-white">
+                                <div class="d-flex justify-content-between">
+                                    <div>
+                                        <i class="fas fa-money-bill-wave"></i>
+                                        الرصيد المتاح
+                                    </div>
+                                    <span class="fw-bold">{{ balance }} $</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="bg-success p-3 rounded-3 text-white">
+                                <div class="d-flex justify-content-between">
+                                    <div>
+                                        <i class="fas fa-chart-line"></i>
+                                        إجمالي الأرباح
+                                    </div>
+                                    <span class="fw-bold">{{ total_profit }} $</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
-    <div class="user-info-grid">
-        <div class="info-item">
-            <span class="info-label">إعادة الشحن:</span>
-            <span class="info-value" id="depositWallet"></span>
-        </div>
-        <div class="info-item">
-            <span class="info-label">محفظة الأرباح:</span>
-            <span class="info-value" id="profitWallet"></span>
-        </div>
-    </div>
-</div>
 
-<style>
-/* أنماط جديدة */
-.user-identity {
-    flex-grow: 1;
-}
-
-.user-id {
-    margin-top: 5px;
-    font-size: 0.9em;
-    color: var(--neon-blue);
-}
-
-.id-label {
-    color: #fff;
-    margin-left: 8px;
-}
-
-.id-value {
-    background: rgba(0, 40, 80, 0.3);
-    padding: 3px 8px;
-    border-radius: 5px;
-    font-family: monospace;
-}
-
-.TelegramButton {
-    position: fixed;
-    bottom: 80px;
-    right: 20px;
-    background: var(--neon-blue);
-    padding: 12px;
-    border-radius: 50%;
-    box-shadow: 0 4px 15px rgba(0, 168, 255, 0.3);
-    cursor: pointer;
-    transition: transform 0.3s;
-}
-
-.TelegramButton:hover {
-    transform: scale(1.1);
-}
-</style>
-
-<!-- إضافة زر العودة لتليجرام -->
-<div class="TelegramButton" onclick="Telegram.WebApp.close()" style="display: none;">
-    <i class="fab fa-telegram" style="color: white; font-size: 1.5em;"></i>
-</div>
-
-<script>
-// التحكم في زر تليجرام
-if (window.Telegram?.WebApp) {
-    document.querySelector('.TelegramButton').style.display = 'block';
-}
-
-// تعديل دالة الإيداع لربطها بتليجرام
-function processDeposit(amount) {
-    userData.usdtBalance += amount;
-    userData.totalDeposited += amount;
-    saveUserData();
-    updateDisplay();
-    
-    if (window.Telegram?.WebApp) {
-        Telegram.WebApp.HapticFeedback.impactOccurred('heavy');
-    }
-}
+    <!-- السكربتات -->
+    <script>
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text)
+                .then(() => alert('تم النسخ!'))
+                .catch(err => console.error('فشل النسخ:', err));
+        }
     </script>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://kit.fontawesome.com/your-kit-code.js"></script>
+</body>
+    </html>
