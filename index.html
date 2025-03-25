@@ -5,20 +5,23 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>ROK Mining Pro</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700&display=swap" rel="stylesheet">
     <style>
         :root {
             --neon-blue: #00a8ff;
+            --deep-blue: #0a1128;
             --dark-bg: linear-gradient(145deg, #0a1128 0%, #000308 100%);
             --card-bg: rgba(5, 25, 55, 0.9);
+            --text-glow: 0 0 15px rgba(0, 168, 255, 0.7);
             --green: #00ff88;
-            --bottom-nav-bg: rgba(0, 20, 40, 0.95);
+            --red: #ff4444;
         }
 
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
+            -webkit-tap-highlight-color: transparent;
         }
 
         body {
@@ -26,7 +29,42 @@
             color: #fff;
             font-family: 'Tajawal', sans-serif;
             min-height: 100vh;
-            padding-bottom: 70px;
+            padding: 70px 0 70px;
+        }
+
+        .balance-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: var(--card-bg);
+            padding: 12px 15px;
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+            border-bottom: 2px solid var(--neon-blue);
+            z-index: 1000;
+        }
+
+        .balance-item {
+            flex: 1;
+            text-align: center;
+            padding: 10px;
+            border-radius: 8px;
+            background: rgba(0, 40, 80, 0.3);
+            border: 1px solid var(--neon-blue);
+        }
+
+        .balance-label {
+            font-size: 0.8em;
+            color: var(--neon-blue);
+            margin-bottom: 5px;
+        }
+
+        .balance-amount {
+            font-size: 1em;
+            color: var(--green);
+            font-weight: bold;
         }
 
         .main-content {
@@ -35,26 +73,40 @@
             margin: 0 auto;
         }
 
+        .section {
+            display: none;
+        }
+
+        .section.active {
+            display: block;
+        }
+
         .card {
             background: var(--card-bg);
             border: 1px solid var(--neon-blue);
             border-radius: 15px;
             padding: 20px;
             margin-bottom: 15px;
-            text-align: center;
-            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
         }
 
-        .client-info {
-            background: rgba(0, 40, 80, 0.3);
-            padding: 10px;
-            border-radius: 10px;
-            border: 1px solid var(--neon-blue);
-            margin-bottom: 15px;
-            text-align: center;
+        .card-title {
+            margin: 0 0 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--neon-blue);
+        }
+
+        .card-title i {
+            font-size: 1.4em;
         }
 
         .action-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
             width: 100%;
             padding: 15px;
             border: none;
@@ -70,10 +122,60 @@
             color: #000;
         }
 
-        .timer {
-            font-size: 1.5em;
+        .action-btn.secondary {
+            background: var(--neon-blue);
+            color: #fff;
+        }
+
+        .action-btn:active {
+            transform: scale(0.98);
+            opacity: 0.9;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        .input-label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--neon-blue);
+        }
+
+        .input-field {
+            width: 100%;
+            padding: 12px 15px;
+            background: rgba(0, 40, 80, 0.3);
+            border: 1px solid var(--neon-blue);
+            border-radius: 8px;
+            color: #fff;
+            font-size: 1em;
+        }
+
+        .vip-grid {
+            display: grid;
+            gap: 15px;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+        }
+
+        .vip-card {
+            background: linear-gradient(145deg, #001a2a, #002244);
+            border: 2px solid var(--green);
+            border-radius: 12px;
+            padding: 15px;
+            text-align: center;
+            transition: transform 0.2s;
+        }
+
+        .vip-card:active {
+            transform: scale(0.98);
+        }
+
+        .vip-price {
             color: var(--green);
-            margin-top: 10px;
+            font-size: 1.2em;
+            margin: 10px 0;
+            font-weight: bold;
         }
 
         .bottom-nav {
@@ -81,117 +183,261 @@
             bottom: 0;
             left: 0;
             right: 0;
-            background: var(--bottom-nav-bg);
+            background: rgba(0, 20, 40, 0.98);
             display: flex;
             justify-content: space-around;
             padding: 10px 0;
-            border-top: 2px solid var(--neon-blue);
+            backdrop-filter: blur(15px);
+            border-top: 1px solid var(--neon-blue);
         }
 
         .nav-btn {
             color: #fff;
             text-align: center;
-            padding: 10px;
+            font-size: 0.75em;
+            padding: 10px 5px;
             border-radius: 10px;
-            width: 20%;
+            transition: 0.2s;
+            width: 23%;
             display: flex;
             flex-direction: column;
             align-items: center;
-            transition: 0.2s;
+            gap: 3px;
         }
 
         .nav-btn.active {
-            background: rgba(0, 168, 255, 0.3);
+            background: rgba(0, 168, 255, 0.2);
         }
 
         .nav-btn i {
             font-size: 1.4em;
         }
 
-        .section {
-            display: none;
-        }
-
-        .section.active {
-            display: block;
+        @media (max-width: 480px) {
+            .balance-bar {
+                padding: 10px;
+            }
+            
+            .balance-item {
+                padding: 8px;
+            }
+            
+            .card {
+                padding: 15px;
+            }
         }
     </style>
 </head>
 <body>
+    <div class="balance-bar">
+        <div class="balance-item">
+            <div class="balance-label">USDT</div>
+            <div class="balance-amount" id="usdtBalance">100.0000</div>
+        </div>
+        <div class="balance-item">
+            <div class="balance-label">ROK</div>
+            <div class="balance-amount" id="coins">0.0000</div>
+        </div>
+    </div>
 
-    <div class="main-content">
-        <section id="mining" class="section active">
-            <div class="card">
-                <h2 class="card-title"><i class="fas fa-microchip"></i> لوحة التعدين</h2>
-                
-                <div class="client-info">
-                    <div><strong>المعرف:</strong> <span id="userId">-</span></div>
-                    <div><strong>الاسم:</strong> <span id="userName">-</span></div>
-                    <div><strong>الرصيد:</strong> <span id="usdtBalance">0.00</span> USDT</div>
-                </div>
 
-                <div class="timer" id="countdown">00:00:00</div>
-                
-                <button class="action-btn primary" id="miningBtn" onclick="toggleMining()">
-                    <i class="fas fa-power-off"></i> بدء التعدين
-                </button>
-            </div>
-        </section>
 
         <section id="deposit" class="section">
             <div class="card">
                 <h2 class="card-title"><i class="fas fa-coins"></i> شحن الرصيد</h2>
-                <p>عنوان المحفظة: <strong>0xD72Bd4709761f67...</strong></p>
+                <div class="input-group">
+                    <label class="input-label">عنوان المحفظة</label>
+                    <div style="display:flex;gap:10px;">
+                        <input type="text" class="input-field" value="0xD72Bd4709761f6719F1AABD6E3325ac3fD6D12c4" readonly>
+                        <button class="action-btn secondary" onclick="copyAddress()" style="width:100px;">
+                            <i class="fas fa-copy"></i>
+                        </button>
+                    </div>
+                </div>
+                <button class="action-btn primary" onclick="window.open('https://t.me/')">
+                    <i class="fas fa-qrcode"></i>
+                    إيداع USDT
+                </button>
             </div>
         </section>
 
         <section id="withdraw" class="section">
             <div class="card">
                 <h2 class="card-title"><i class="fas fa-wallet"></i> سحب الأرباح</h2>
-                <p>يرجى إدخال المبلغ وعنوان المحفظة.</p>
+                <div class="input-group">
+                    <label class="input-label">المبلغ (USDT)</label>
+                    <input type="number" class="input-field" id="withdrawAmount" step="0.0001">
+                </div>
+                <div class="input-group">
+                    <label class="input-label">عنوان المحفظة</label>
+                    <input type="text" class="input-field" id="withdrawAddress">
+                </div>
+                <button class="action-btn primary" onclick="processWithdraw()">
+                    <i class="fas fa-check-circle"></i>
+                    تأكيد السحب
+                </button>
             </div>
         </section>
 
         <section id="vip" class="section">
             <div class="card">
                 <h2 class="card-title"><i class="fas fa-crown"></i> باقات VIP</h2>
-                <p>يمكنك ترقية حسابك لزيادة سرعة التعدين.</p>
+                <div class="vip-grid">
+                    <div class="vip-card" onclick="buyVIP(1)">
+                        <h3>VIP 1</h3>
+                        <div class="vip-price">3.0000 USDT</div>
+                        <small style="color:var(--neon-blue)">+20% سرعة تعدين</small>
+                    </div>
+                    <div class="vip-card" onclick="buyVIP(2)">
+                        <h3>VIP 2</h3>
+                        <div class="vip-price">5.0000 USDT</div>
+                        <small style="color:var(--neon-blue)">+40% سرعة تعدين</small>
+                    </div>
+                    <div class="vip-card" onclick="buyVIP(3)">
+                        <h3>VIP 3</h3>
+                        <div class="vip-price">7.0000 USDT</div>
+                        <small style="color:var(--neon-blue)">+60% سرعة تعدين</small>
+                    </div>
+                </div>
             </div>
         </section>
 
         <section id="team" class="section">
             <div class="card">
                 <h2 class="card-title"><i class="fas fa-users"></i> نظام الإحالة</h2>
-                <p>قم بدعوة الأصدقاء للحصول على مكافآت.</p>
+                <div class="input-group">
+                    <label class="input-label">رابط الدعوة الخاص بك</label>
+                    <div style="display:flex;gap:10px;">
+                        <input type="text" class="input-field" id="referralLink" value="https://t.me/..." readonly>
+                        <button class="action-btn secondary" onclick="copyReferral()" style="width:100px;">
+                            <i class="fas fa-copy"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="input-group" style="text-align:center; margin-top:20px;">
+                    <p>عدد المدعوين: <span id="referralCount" style="color:var(--green)">0</span></p>
+                    <button class="action-btn primary" onclick="inviteFriend()">
+                        <i class="fas fa-user-plus"></i>
+                        دعوة صديق (+1 USDT)
+                    </button>
+                </div>
             </div>
         </section>
     </div>
 
     <nav class="bottom-nav">
         <button class="nav-btn active" onclick="showSection('mining')">
-            <i class="fas fa-microchip"></i> تعدين
+            <i class="fas fa-microchip"></i>
+            تعدين
         </button>
         <button class="nav-btn" onclick="showSection('deposit')">
-            <i class="fas fa-coins"></i> إيداع
+            <i class="fas fa-coins"></i>
+            إيداع
         </button>
         <button class="nav-btn" onclick="showSection('withdraw')">
-            <i class="fas fa-wallet"></i> سحب
+            <i class="fas fa-wallet"></i>
+            سحب
         </button>
         <button class="nav-btn" onclick="showSection('vip')">
-            <i class="fas fa-crown"></i> VIP
+            <i class="fas fa-crown"></i>
+            VIP
         </button>
         <button class="nav-btn" onclick="showSection('team')">
-            <i class="fas fa-users"></i> فريق
+            <i class="fas fa-users"></i>
+            فريق
         </button>
     </nav>
 
     <script>
-        let isMining = false;
-        let miningInterval;
-        let remainingTime = 86400;
-        let userId, userName;
-        let usdtBalance = 0.00;
+        // توليد معرف مستخدم فريد
+        const userId = window.Telegram?.WebApp?.initDataUnsafe?.user?.id 
+            || `user_${Math.random().toString(36).substr(2, 9)}_${Date.now()}`;
 
+        // بيانات المستخدم الأساسية
+        let userData = {
+            usdtBalance: 100.0000,
+            coins: 0.0000,
+            isMining: false,
+            remainingTime: 86400,
+            power: 1.0000,
+            referralCount: 0,
+            vipLevel: 0,
+            lastUpdate: null
+        };
+
+        // ------ نظام التخزين ------
+        function saveUserData() {
+            userData.lastUpdate = new Date().toISOString();
+            localStorage.setItem(`rok_user_${userId}`, JSON.stringify(userData));
+        }
+
+        function loadUserData() {
+            const savedData = localStorage.getItem(`rok_user_${userId}`);
+            if (savedData) {
+                try {
+                    const parsed = JSON.parse(savedData);
+                    const elapsed = parsed.lastUpdate 
+                        ? Math.floor((Date.now() - new Date(parsed.lastUpdate)) / 1000
+                        : 0;
+
+                    userData = {
+                        ...userData,
+                        ...parsed,
+                        remainingTime: Math.max(parsed.remainingTime - elapsed, 0)
+                    };
+                    
+                    if (parsed.isMining) startMining();
+                } catch (e) {
+                    console.error('خطأ في تحميل البيانات:', e);
+                }
+            }
+            updateDisplay();
+        }
+
+        // ------ نظام التعدين ------
+        let miningInterval;
+        function startMining() {
+            if (userData.isMining) {
+                clearInterval(miningInterval);
+                userData.isMining = false;
+                saveUserData();
+                return;
+            }
+
+            userData.isMining = true;
+            const startTime = Date.now() - (86400 - userData.remainingTime) * 1000;
+
+            miningInterval = setInterval(() => {
+                const elapsed = Math.floor((Date.now() - startTime) / 1000);
+                userData.remainingTime = Math.max(86400 - elapsed, 0);
+
+                if (userData.remainingTime <= 0) {
+                    endMining();
+                    return;
+                }
+
+                userData.coins += 0.0001 * userData.power;
+                userData.coins = parseFloat(userData.coins.toFixed(4));
+                
+                updateTimer();
+                updateDisplay();
+                if (elapsed % 10 === 0) saveUserData();
+            }, 100);
+
+            saveUserData();
+        }
+
+        function endMining() {
+            clearInterval(miningInterval);
+            userData.usdtBalance += parseFloat((userData.coins / 35).toFixed(4));
+            userData.coins = 0.0000;
+            userData.remainingTime = 86400;
+            userData.isMining = false;
+            updateDisplay();
+            saveUserData();
+        }
+
+        // ------ الوظائف الأساسية ------
         function showSection(sectionId) {
             document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
             document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
@@ -199,38 +445,866 @@
             event.target.classList.add('active');
         }
 
-        function toggleMining() {
-            if (!userId) {
-                alert("يرجى فتح الصفحة من خلال البوت.");
-                return;
-            }
-
-            const miningBtn = document.getElementById("miningBtn");
+        function buyVIP(level) {
+            const prices = {1:3, 2:5, 3:7};
+            const boosts = {1:1.2, 2:1.4, 3:1.6};
             
-            if (isMining) {
-                clearInterval(miningInterval);
-                isMining = false;
-                miningBtn.innerHTML = '<i class="fas fa-power-off"></i> بدء التعدين';
-                return;
-            }
-
-            isMining = true;
-            miningBtn.innerHTML = '<i class="fas fa-pause"></i> إيقاف التعدين';
-            miningInterval = setInterval(updateTimer, 1000);
-        }
-
-        function getTelegramUserData() {
-            const tg = window.Telegram.WebApp;
-            if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
-                userId = tg.initDataUnsafe.user.id;
-                userName = tg.initDataUnsafe.user.first_name;
-                document.getElementById("userId").textContent = userId;
-                document.getElementById("userName").textContent = userName;
+            if(userData.usdtBalance >= prices[level]) {
+                userData.usdtBalance = parseFloat((userData.usdtBalance - prices[level]).toFixed(4));
+                userData.power = boosts[level];
+                userData.vipLevel = level;
+                updateDisplay();
+                saveUserData();
+                alert(`تم تفعيل VIP ${level} بنجاح!`);
+            } else {
+                alert('الرصيد غير كافي!');
             }
         }
 
-        window.onload = getTelegramUserData;
+        function processWithdraw() {
+            const amount = parseFloat(document.getElementById('withdrawAmount').value);
+            const address = document.getElementById('withdrawAddress').value;
+            
+            if(!/^0x[a-fA-F0-9]{40}$/.test(address)) {
+                return alert('عنوان المحفظة غير صحيح!');
+            }
+            
+            if(amount < 10 || amount > userData.usdtBalance) {
+                return alert('المبلغ يجب أن يكون بين 10 و' + userData.usdtBalance.toFixed(4));
+            }
+            
+            userData.usdtBalance = parseFloat((userData.usdtBalance - amount).toFixed(4));
+            updateDisplay();
+            saveUserData();
+            alert(`تم إرسال ${amount.toFixed(4)} USDT بنجاح!`);
+        }
+
+        function inviteFriend() {
+            userData.referralCount++;
+            userData.usdtBalance = parseFloat((userData.usdtBalance + 1).toFixed(4));
+            updateDisplay();
+            saveUserData();
+            alert('تم إضافة 1 USDT إلى رصيدك!');
+        }
+
+        // ------ التحديثات ------
+        function updateTimer() {
+            const hours = Math.floor(userData.remainingTime / 3600);
+            const minutes = Math.floor((userData.remainingTime % 3600) / 60);
+            const seconds = userData.remainingTime % 60;
+            document.getElementById('countdown').textContent = 
+                `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+        }
+
+        function updateDisplay() {
+            document.getElementById('coins').textContent = userData.coins.toFixed(4);
+            document.getElementById('usdtBalance').textContent = userData.usdtBalance.toFixed(4);
+            document.getElementById('referralCount').textContent = userData.referralCount;
+            document.getElementById('referralLink').value = 
+                `https://t.me/${window.Telegram?.WebApp?.initDataUnsafe?.user?.username || 'ROK_Dubai_bot'}?start=${userId}`;
+        }
+
+        // ------ الأحداث ------
+        window.addEventListener('load', () => {
+            loadUserData();
+            if (userData.isMining) startMining();
+        });
+
+        window.addEventListener('beforeunload', () => {
+            if (userData.isMining) saveUserData();
+        });
+
+        function copyAddress() {
+            navigator.clipboard.writeText('0xD72Bd4709761f6719F1AABD6E3325ac3fD6D12c4');
+            alert('تم نسخ العنوان!');
+        }
+
+        function copyReferral() {
+            const link = document.getElementById('referralLink');
+            navigator.clipboard.writeText(link.value);
+            alert('تم نسخ رابط الدعوة!');
+        }
     </script>
-
 </body>
 </html>
+<script>
+    // ... (الكود السابق حتى تعريف userData)
+
+    // ------ نظام التخزين ------
+    function saveUserData() {
+        try {
+            userData.lastUpdate = new Date().toISOString();
+            localStorage.setItem(`rok_user_${userId}`, JSON.stringify({
+                ...userData,
+                // إزالة الدوال غير القابلة للتخزين
+                power: undefined,
+                lastUpdate: undefined
+            }));
+        } catch (error) {
+            console.error('خطأ في الحفظ:', error);
+        }
+    }
+
+    function loadUserData() {
+        try {
+            const savedData = localStorage.getItem(`rok_user_${userId}`);
+            if (savedData) {
+                const parsed = JSON.parse(savedData);
+                const elapsed = parsed.lastUpdate ? 
+                    Math.floor((Date.now() - new Date(parsed.lastUpdate)) / 1000) : 0;
+
+                userData = {
+                    ...userData,
+                    ...parsed,
+                    remainingTime: Math.max(parsed.remainingTime - elapsed, 0),
+                    power: parsed.vipLevel ? [1, 1.2, 1.4, 1.6][parsed.vipLevel] : 1
+                };
+            }
+        } catch (e) {
+            console.error('خطأ في التحميل:', e);
+        }
+        updateDisplay();
+    }
+
+    // ------ إصلاح نظام التعدين ------
+    function startMining() {
+        if (userData.isMining) {
+            clearInterval(miningInterval);
+            userData.isMining = false;
+            saveUserData();
+            updateDisplay();
+            return;
+        }
+
+        userData.isMining = true;
+        const startTime = Date.now() - (86400 - userData.remainingTime) * 1000;
+
+        miningInterval = setInterval(() => {
+            const elapsed = Math.floor((Date.now() - startTime) / 1000);
+            userData.remainingTime = Math.max(86400 - elapsed, 0);
+
+            if (userData.remainingTime <= 0) {
+                endMining();
+                return;
+            }
+
+            userData.coins += 0.0001 * userData.power;
+            userData.coins = Number(userData.coins.toFixed(4));
+            
+            updateTimer();
+            if (elapsed % 5 === 0) { // تحديث العرض كل 5 ثوانٍ
+                updateDisplay();
+                saveUserData();
+            }
+        }, 100);
+
+        updateDisplay();
+        saveUserData();
+    }
+
+    // ------ إصلاح نظام VIP ------
+    const VIP_CONFIG = {
+        1: { price: 3, boost: 1.2 },
+        2: { price: 5, boost: 1.4 },
+        3: { price: 7, boost: 1.6 }
+    };
+
+    function buyVIP(level) {
+        const config = VIP_CONFIG[level];
+        if (!config) return;
+        
+        if(userData.usdtBalance >= config.price) {
+            userData.usdtBalance = Number((userData.usdtBalance - config.price).toFixed(4));
+            userData.power = config.boost;
+            userData.vipLevel = level;
+            updateDisplay();
+            saveUserData();
+            alert(`✅ تم تفعيل VIP ${level} بنجاح!`);
+        } else {
+            alert('⛔ الرصيد غير كافي!');
+        }
+    }
+
+    // ------ إصلاح نظام السحب ------
+    function processWithdraw() {
+        const amountInput = document.getElementById('withdrawAmount');
+        const addressInput = document.getElementById('withdrawAddress');
+        
+        const amount = Number(amountInput.value);
+        const address = addressInput.value.trim();
+
+        if (!/^0x[a-fA-F0-9]{40}$/.test(address)) {
+            alert('⛔ عنوان المحفظة غير صحيح!');
+            addressInput.focus();
+            return;
+        }
+        
+        if (amount < 10 || amount > userData.usdtBalance) {
+            alert(`⛔ المبلغ يجب أن يكون بين 10 و ${userData.usdtBalance.toFixed(4)}`);
+            amountInput.focus();
+            return;
+        }
+        
+        userData.usdtBalance = Number((userData.usdtBalance - amount).toFixed(4));
+        updateDisplay();
+        saveUserData();
+        alert(`✅ تم إرسال ${amount.toFixed(4)} USDT إلى العنوان:\n${address}`);
+    }
+
+    // ... (بقية الدوال دون تغيير)
+</script>
+<script>
+    // ... (الكود السابق حتى تعريف userData)
+
+    // ------ إصلاح نظام العرض ------
+    function showSection(sectionId) {
+        // إزالة الكلاس النشط من جميع الأقسام
+        document.querySelectorAll('.section').forEach(s => {
+            s.classList.remove('active');
+        });
+        
+        // إزالة الكلاس النشط من جميع الأزرار
+        document.querySelectorAll('.nav-btn').forEach(btn => {
+            btn.classList.remove('active');
+        });
+        
+        // إضافة الكلاس النشط للقسم المحدد
+        const targetSection = document.getElementById(sectionId);
+        if (targetSection) {
+            targetSection.classList.add('active');
+        }
+        
+        // إضافة الكلاس النشط للزر المضغوط
+        if (event && event.target) {
+            event.target.classList.add('active');
+        }
+    }
+
+    // ------ إصلاح نظام الإحالة ------
+    function inviteFriend() {
+        userData.referralCount++;
+        userData.usdtBalance = Number((userData.usdtBalance + 1).toFixed(4));
+        updateDisplay();
+        saveUserData();
+        alert('🎉 تم إضافة 1 USDT إلى رصيدك!');
+        
+        // تحديث رابط الإحالة ديناميكيًا
+        document.getElementById('referralLink').value = 
+            `https://t.me/${window.Telegram?.WebApp?.initDataUnsafe?.user?.username || 'ROK_Dubai_bot'}?start=${userId}`;
+    }
+
+    // ------ إصلاح نظام النسخ ------
+    function copyAddress() {
+        navigator.clipboard.writeText('0xD72Bd4709761f6719F1AABD6E3325ac3fD6D12c4')
+            .then(() => {
+                showToast('✅ تم نسخ العنوان بنجاح!');
+            })
+            .catch(err => {
+                showToast('⛔ فشل في النسخ!');
+                console.error('خطأ النسخ:', err);
+            });
+    }
+
+    function copyReferral() {
+        const link = document.getElementById('referralLink');
+        navigator.clipboard.writeText(link.value)
+            .then(() => {
+                showToast('✅ تم نسخ رابط الدعوة!');
+            })
+            .catch(err => {
+                showToast('⛔ فشل في النسخ!');
+                console.error('خطأ النسخ:', err);
+            });
+    }
+
+    // ------ نظام التنبيهات المحسن ------
+    function showToast(message) {
+        const toast = document.createElement('div');
+        toast.style.position = 'fixed';
+        toast.style.bottom = '20px';
+        toast.style.left = '50%';
+        toast.style.transform = 'translateX(-50%)';
+        toast.style.backgroundColor = 'rgba(0,40,80,0.9)';
+        toast.style.color = '#00ff88';
+        toast.style.padding = '15px 25px';
+        toast.style.borderRadius = '10px';
+        toast.style.border = '1px solid var(--neon-blue)';
+        toast.style.zIndex = '10000';
+        toast.textContent = message;
+        
+        document.body.appendChild(toast);
+        
+        setTimeout(() => {
+            toast.remove();
+        }, 3000);
+    }
+
+    // ------ تفعيل الأحداث بشكل صحيح ------
+    document.addEventListener('DOMContentLoaded', () => {
+        // ربط الأحداث مع الأزرار
+        document.querySelectorAll('.nav-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const sectionId = this.getAttribute('onclick').replace("showSection('", "").replace("')", "");
+                showSection(sectionId);
+            });
+        });
+
+        // تفعيل الإدخالات الرقمية
+        document.getElementById('withdrawAmount').addEventListener('input', function(e) {
+            this.value = this.value.replace(/[^0-9.]/g, '');
+        });
+    });
+
+    // ... (بقية الدوال كما هي مع التعديلات السابقة)
+</script>
+<style>
+    /* أضف هذه الأنماط الجديدة أسفل قسم الأنماط الأصلي */
+    
+    /* تحسين أزرار التنقل السفلية */
+    .nav-btn {
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(5px);
+        transition: all 0.3s ease;
+    }
+    
+    .nav-btn.active {
+        background: var(--neon-blue);
+        box-shadow: 0 0 15px rgba(0, 168, 255, 0.5);
+    }
+    
+    .nav-btn:hover {
+        transform: translateY(-3px);
+    }
+    
+    /* تحسين الأزرار الرئيسية */
+    .action-btn.primary {
+        background: linear-gradient(145deg, #00ff88, #00cc6a);
+        box-shadow: 0 4px 15px rgba(0, 255, 136, 0.4);
+    }
+    
+    .action-btn.secondary {
+        background: linear-gradient(145deg, #00a8ff, #0077ff);
+        box-shadow: 0 4px 15px rgba(0, 168, 255, 0.4);
+    }
+    
+    /* تأثيرات عند التفاعل */
+    .action-btn:active {
+        transform: scale(0.95);
+        filter: brightness(0.9);
+    }
+    
+    /* تحسين بطاقات VIP */
+    .vip-card {
+        background: linear-gradient(145deg, #002635, #00394d);
+        border: 2px solid var(--green);
+        box-shadow: 0 4px 20px rgba(0, 255, 136, 0.2);
+    }
+    
+    /* إضافة تأثيرات للمجالات النصية */
+    .input-field {
+        transition: all 0.3s ease;
+        border: 1px solid rgba(0, 168, 255, 0.3);
+    }
+    
+    .input-field:focus {
+        border-color: var(--neon-blue);
+        box-shadow: 0 0 10px rgba(0, 168, 255, 0.2);
+    }
+</style>
+<style>
+/* أضف هذه الأنماط أسفل قسم الأنماط السابق */
+.action-btn.primary {
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    border: 2px solid transparent;
+    background-image: linear-gradient(145deg, #00ff88, #00cc6a);
+    box-shadow: 0 4px 15px rgba(0, 255, 136, 0.3);
+}
+
+.action-btn.primary::after {
+    content: "";
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(
+        45deg,
+        transparent,
+        rgba(255,255,255,0.2),
+        transparent
+    );
+    transform: rotate(45deg);
+    animation: shine 3s infinite;
+}
+
+@keyframes shine {
+    0% { left: -50%; }
+    100% { left: 150%; }
+}
+
+.action-btn.primary:active {
+    transform: scale(0.95);
+    box-shadow: 0 2px 8px rgba(0, 255, 136, 0.2);
+}
+
+.action-btn.primary.active {
+    background-image: linear-gradient(145deg, #ff4444, #cc0000);
+    box-shadow: 0 4px 15px rgba(255, 68, 68, 0.3);
+}
+
+.action-btn.primary.active::after {
+    background: linear-gradient(
+        45deg,
+        transparent,
+        rgba(255,255,255,0.4),
+        transparent
+    );
+}
+</style>
+
+<script>
+function startMining() {
+    const miningBtn = document.querySelector('.action-btn.primary');
+    
+    if (userData.isMining) {
+        clearInterval(miningInterval);
+        miningBtn.classList.remove('active');
+        miningBtn.innerHTML = `<i class="fas fa-power-off"></i> بدء التعدين`;
+    } else {
+        miningBtn.classList.add('active');
+        miningBtn.innerHTML = `<i class="fas fa-stop"></i> إيقاف التعدين`;
+        
+        const startTime = Date.now() - (86400 - userData.remainingTime) * 1000;
+        
+        miningInterval = setInterval(() => {
+            const elapsed = Math.floor((Date.now() - startTime) / 1000);
+            userData.remainingTime = Math.max(86400 - elapsed, 0);
+            
+            if (userData.remainingTime <= 0) {
+                endMining();
+                return;
+            }
+            
+            userData.coins += 0.0001 * userData.power;
+            userData.coins = Number(userData.coins.toFixed(4));
+            
+            updateTimer();
+            if (elapsed % 5 === 0) {
+                updateDisplay();
+                saveUserData();
+            }
+        }, 100);
+    }
+    
+    userData.isMining = !userData.isMining;
+    saveUserData();
+    updateDisplay();
+}
+</script>
+<script>
+// ... (ابق على تعريف userData كما هو)
+
+function startMining() {
+    const miningBtn = document.querySelector('.mining-btn');
+    const countdownElement = document.getElementById('countdown');
+    
+    if (userData.isMining) {
+        clearInterval(miningInterval);
+        miningBtn.classList.remove('active');
+        userData.isMining = false;
+        saveUserData();
+        return;
+    }
+
+    userData.isMining = true;
+    miningBtn.classList.add('active');
+    
+    const startTimestamp = Date.now() - (86400 - userData.remainingTime) * 1000;
+    
+    // دالة التحديث الرئيسية
+    function updateMining() {
+        const currentTime = Date.now();
+        const elapsedSeconds = Math.floor((currentTime - startTimestamp) / 1000);
+        userData.remainingTime = Math.max(86400 - elapsedSeconds, 0);
+        
+        // تحديث العداد
+        const hours = Math.floor(userData.remainingTime / 3600);
+        const minutes = Math.floor((userData.remainingTime % 3600) / 60);
+        const seconds = userData.remainingTime % 60;
+        
+        countdownElement.textContent = 
+            `${String(hours).padStart(2, '0')}:` +
+            `${String(minutes).padStart(2, '0')}:` +
+            `${String(seconds).padStart(2, '0')}`;
+        
+        // حساب العملات
+        if (userData.remainingTime > 0) {
+            userData.coins += 0.0001 * userData.power;
+            userData.coins = Number(userData.coins.toFixed(4));
+            document.getElementById('coins').textContent = userData.coins.toFixed(4);
+        } else {
+            endMining();
+        }
+    }
+
+    // بدء العد
+    miningInterval = setInterval(updateMining, 1000);
+    updateMining(); // تحديث فوري
+    saveUserData();
+}
+
+function endMining() {
+    clearInterval(miningInterval);
+    userData.usdtBalance += Number((userData.coins / 35).toFixed(4));
+    userData.coins = 0;
+    userData.remainingTime = 86400;
+    userData.isMining = false;
+    
+    document.querySelector('.mining-btn').classList.remove('active');
+    document.getElementById('countdown').textContent = '24:00:00';
+    updateDisplay();
+    saveUserData();
+}
+
+// ... (ابق على بقية الدوال كما هي)
+</script>
+<!-- داخل قسم التعدين -->
+<section id="mining" class="section active">
+    <div class="card">
+        <!-- معلومات المستخدم المحدثة -->
+        <div class="user-info-card">
+            <div class="user-info-header">
+                <i class="fas fa-wallet"></i>
+                <h3>محفظة المستخدم</h3>
+            </div>
+            <div class="user-info-grid">
+                <div class="info-item">
+                    <span class="info-label">اسم المستخدم:</span>
+                    <span class="info-value" id="username"></span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">إعادة شحن المحفظة:</span>
+                    <span class="info-value" id="depositWallet">0.0000 USDT</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">محفظة الربح:</span>
+                    <span class="info-value" id="profitWallet">0.0000 USDT</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- لوحة التعدين المعدلة -->
+        <div class="mining-panel">
+            <div class="mining-header">
+                <h2><i class="fas fa-hard-hat"></i> لوحة التعدين</h2>
+                <div class="mining-status">
+                    <span id="miningStatus">غير نشط</span>
+                    <div class="status-indicator"></div>
+                </div>
+            </div>
+            <div class="countdown-container">
+                <div class="timer" id="countdown">24:00:00</div>
+                <div class="coins-counter">
+                    <i class="fas fa-coins"></i>
+                    <span id="coinsCounter">0.0000 ROK</span>
+                </div>
+            </div>
+            <button class="action-btn primary mining-btn" onclick="startMining()">
+                <i class="fas fa-play"></i>
+                بدء التشغيل
+            </button>
+        </div>
+    </div>
+</section>
+
+<style>
+/* أنماط محدثة */
+.user-info-card {
+    background: linear-gradient(145deg, #00172c, #002440);
+    border: 1px solid var(--neon-blue);
+    border-radius: 15px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 20px rgba(0, 168, 255, 0.15);
+}
+
+.user-info-header {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.user-info-header i {
+    font-size: 1.8em;
+    color: var(--green);
+}
+
+.user-info-header h3 {
+    margin: 0;
+    color: var(--neon-blue);
+    font-size: 1.4em;
+}
+
+.mining-panel {
+    background: linear-gradient(145deg, #00172c, #002440);
+    border: 1px solid var(--neon-blue);
+    border-radius: 15px;
+    padding: 20px;
+}
+
+.mining-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+}
+
+.mining-status {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.status-indicator {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: #ff4444;
+    box-shadow: 0 0 10px rgba(255, 68, 68, 0.3);
+}
+
+.status-indicator.active {
+    background: #00ff88;
+    box-shadow: 0 0 10px rgba(0, 255, 136, 0.3);
+}
+
+.countdown-container {
+    text-align: center;
+    margin: 25px 0;
+}
+
+.coins-counter {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 15px;
+    padding: 10px 20px;
+    background: rgba(0, 40, 80, 0.3);
+    border-radius: 8px;
+}
+
+.coins-counter i {
+    color: var(--green);
+}
+</style>
+
+<script>
+// التعديلات على الدوال
+function updateMiningStatus() {
+    const statusElement = document.getElementById('miningStatus');
+    const indicator = document.querySelector('.status-indicator');
+    
+    if (userData.isMining) {
+        statusElement.textContent = "نشط الآن";
+        indicator.classList.add('active');
+    } else {
+        statusElement.textContent = "غير نشط";
+        indicator.classList.remove('active');
+    }
+}
+
+function startMining() {
+    // ... الكود السابق ...
+    updateMiningStatus();
+}
+
+function endMining() {
+    // ... الكود السابق ...
+    updateMiningStatus();
+}
+
+function updateDisplay() {
+    document.getElementById('username').textContent = userData.username || "ضيف";
+    document.getElementById('depositWallet').textContent = userData.totalDeposited.toFixed(4) + ' USDT';
+    document.getElementById('profitWallet').textContent = userData.totalConverted.toFixed(4) + ' USDT';
+    // ... بقية التحديثات ...
+}
+</script>
+<script>
+// توليد/جلب معرف المستخدم من تليجرام
+const tgUser = window.Telegram?.WebApp?.initDataUnsafe?.user;
+const userId = tgUser?.id ? `tg_${tgUser.id}` : `guest_${Math.random().toString(36).substr(2, 6)}`;
+
+// بيانات المستخدم الأساسية
+let userData = {
+    username: tgUser?.username ? `@${tgUser.username}` : tgUser?.first_name || 'ضيف',
+    usdtBalance: 100.0000,
+    coins: 0.0000,
+    totalDeposited: 0.0000,
+    totalConverted: 0.0000,
+    isMining: false,
+    remainingTime: 86400,
+    power: 1.0000,
+    referralCount: 0,
+    vipLevel: 0,
+    lastUpdate: new Date().toISOString()
+};
+
+// نظام التخزين المحسن
+function saveUserData() {
+    try {
+        localStorage.setItem(`rok_user_${userId}`, JSON.stringify({
+            ...userData,
+            lastUpdate: new Date().toISOString()
+        }));
+    } catch (error) {
+        console.error('خطأ في الحفظ:', error);
+        showToast('⚠️ تعذر حفظ البيانات!');
+    }
+}
+
+function loadUserData() {
+    try {
+        const savedData = localStorage.getItem(`rok_user_${userId}`);
+        if (savedData) {
+            const parsed = JSON.parse(savedData);
+            const elapsed = parsed.lastUpdate ? 
+                Math.floor((Date.now() - new Date(parsed.lastUpdate)) / 1000) : 0;
+
+            userData = {
+                ...userData, // الحفاظ على البيانات الجديدة إذا لم تكن محفوظة
+                ...parsed,
+                remainingTime: Math.max(parsed.remainingTime - elapsed, 0)
+            };
+        }
+    } catch (error) {
+        console.error('خطأ في التحميل:', error);
+        showToast('⚠️ تعذر تحميل البيانات السابقة!');
+    }
+}
+
+// تحديث واجهة المستخدم
+function updateDisplay() {
+    // معلومات المستخدم
+    document.getElementById('username').textContent = userData.username;
+    document.getElementById('userId').textContent = userId.replace('tg_', '');
+    
+    // المعلومات المالية
+    document.getElementById('depositWallet').textContent = userData.totalDeposited.toFixed(4) + ' USDT';
+    document.getElementById('profitWallet').textContent = userData.totalConverted.toFixed(4) + ' USDT';
+    document.getElementById('coins').textContent = userData.coins.toFixed(4);
+    document.getElementById('usdtBalance').textContent = userData.usdtBalance.toFixed(4);
+    
+    // حالة التعدين
+    updateMiningStatus();
+}
+
+// التهيئة الأولية
+window.addEventListener('load', () => {
+    loadUserData();
+    if (tgUser) {
+        Telegram.WebApp.ready();
+        Telegram.WebApp.expand();
+        
+        // إضافة زر الرجوع لتليجرام
+        Telegram.WebApp.BackButton.show().onClick(() => {
+            Telegram.WebApp.close();
+        });
+    }
+    
+    updateDisplay();
+    if (userData.isMining) startMining();
+});
+</script>
+
+<!-- التعديلات على واجهة المستخدم -->
+<div class="user-info-card">
+    <div class="user-info-header">
+        <i class="fas fa-id-card"></i>
+        <div class="user-identity">
+            <h3 id="username"></h3>
+            <div class="user-id">
+                <span class="id-label">ID:</span>
+                <span class="id-value" id="userId"></span>
+            </div>
+        </div>
+    </div>
+    <div class="user-info-grid">
+        <div class="info-item">
+            <span class="info-label">إعادة الشحن:</span>
+            <span class="info-value" id="depositWallet"></span>
+        </div>
+        <div class="info-item">
+            <span class="info-label">محفظة الأرباح:</span>
+            <span class="info-value" id="profitWallet"></span>
+        </div>
+    </div>
+</div>
+
+<style>
+/* أنماط جديدة */
+.user-identity {
+    flex-grow: 1;
+}
+
+.user-id {
+    margin-top: 5px;
+    font-size: 0.9em;
+    color: var(--neon-blue);
+}
+
+.id-label {
+    color: #fff;
+    margin-left: 8px;
+}
+
+.id-value {
+    background: rgba(0, 40, 80, 0.3);
+    padding: 3px 8px;
+    border-radius: 5px;
+    font-family: monospace;
+}
+
+.TelegramButton {
+    position: fixed;
+    bottom: 80px;
+    right: 20px;
+    background: var(--neon-blue);
+    padding: 12px;
+    border-radius: 50%;
+    box-shadow: 0 4px 15px rgba(0, 168, 255, 0.3);
+    cursor: pointer;
+    transition: transform 0.3s;
+}
+
+.TelegramButton:hover {
+    transform: scale(1.1);
+}
+</style>
+
+<!-- إضافة زر العودة لتليجرام -->
+<div class="TelegramButton" onclick="Telegram.WebApp.close()" style="display: none;">
+    <i class="fab fa-telegram" style="color: white; font-size: 1.5em;"></i>
+</div>
+
+<script>
+// التحكم في زر تليجرام
+if (window.Telegram?.WebApp) {
+    document.querySelector('.TelegramButton').style.display = 'block';
+}
+
+// تعديل دالة الإيداع لربطها بتليجرام
+function processDeposit(amount) {
+    userData.usdtBalance += amount;
+    userData.totalDeposited += amount;
+    saveUserData();
+    updateDisplay();
+    
+    if (window.Telegram?.WebApp) {
+        Telegram.WebApp.HapticFeedback.impactOccurred('heavy');
+    }
+}
+    </script>
